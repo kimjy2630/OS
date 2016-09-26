@@ -126,14 +126,14 @@ timer_sleep (int64_t ticks)
 
 //  if(curr != idle_thread){
 
-	  struct sleeping_thread *t;
+	  struct sleeping_thread t;
 
-	  t->thread = curr;
-	  t->wakeup_time = start + ticks;
+	  t.thread = curr;
+	  t.wakeup_time = start + ticks;
 
 	  old_level = intr_disable ();
 //	  list_push_back (&sleeping_thread_list, &t->elem);
-	  list_insert_ordered (&sleeping_thread_list, &t->elem, wakeup_earlyl, NULL);
+	  list_insert_ordered (&sleeping_thread_list, &t.elem, wakeup_early, NULL);
 //	  curr->status = THREAD_BLOCKED;
 //	  schedule();
 	  thread_block();
