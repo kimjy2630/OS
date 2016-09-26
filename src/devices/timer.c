@@ -99,6 +99,14 @@ timer_elapsed (int64_t then)
 }
 
 ////
+bool
+wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux){
+	int64_t time_a = list_entry (a, struct sleeping_thread, elem)->wakeup_time;
+	int64_t time_b = list_entry (b, struct sleeping_thread, elem)->wakeup_time;
+	return time_a < time_b;
+}
+
+////
 /* Suspends execution for approximately TICKS timer ticks. */
 void
 timer_sleep (int64_t ticks) 
@@ -124,7 +132,9 @@ timer_sleep (int64_t ticks)
 
 	  old_level = intr_disable ();
 //	  list_push_back (&sleeping_thread_list, &t->elem);
-	  list_insert_ordered (&sleeping_thread_list, &t->elem, wakeup_early, null);
+	  bool (*less) (struct list_elem*, struct list_elem*, void*);
+	  less = wakeup_early;
+	  list_insert_ordered (&sleeping_thread_list, &t->elem, less, NULL);
 //	  curr->status = THREAD_BLOCKED;
 //	  schedule();
 	  thread_block();
@@ -132,11 +142,6 @@ timer_sleep (int64_t ticks)
 //  }
 }
 
-////
-bool
-wakeup_early (int64_t a, int64_t b, void *aux){
-	return a<b;
-}
 
 /* Suspends execution for approximately MS milliseconds. */
 void
