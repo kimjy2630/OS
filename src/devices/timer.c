@@ -115,7 +115,7 @@ timer_sleep (int64_t ticks)
   struct thread *curr = thread_current();
   enum intr_level old_level;
 
-  if(curr != idle_thread){
+//  if(curr != idle_thread){
 
 	  struct sleeping_thread *t;
 
@@ -123,11 +123,19 @@ timer_sleep (int64_t ticks)
 	  t->wakeup_time = start + ticks;
 
 	  old_level = intr_disable ();
-	  list_push_back (&sleeping_thread_list, &t->elem);
-	  curr->status = THREAD_BLOCKED;
-	  schedule();
+//	  list_push_back (&sleeping_thread_list, &t->elem);
+	  list_insert_ordered (&sleeping_thread_list, &t->elem, wakeup_early, null);
+//	  curr->status = THREAD_BLOCKED;
+//	  schedule();
+	  thread_block();
 	  intr_set_level (old_level);
-  }
+//  }
+}
+
+////
+bool
+wakeup_early (int64_t a, int64_t b, void *aux){
+	return a<b;
 }
 
 /* Suspends execution for approximately MS milliseconds. */
