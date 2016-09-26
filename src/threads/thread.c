@@ -247,6 +247,7 @@ thread_unblock (struct thread *t)
 void
 thread_sleep (int64_t sleep_start, int64_t sleep_time){
 	struct thread *curr = thread_current();
+	enum intr_level old_level;
 
 	if(curr != idle_thread){
 
@@ -275,7 +276,7 @@ thread_sleep (int64_t sleep_start, int64_t sleep_time){
 ////
 void
 thread_wakeup (int64_t time){
-	list_elem *e, *b;
+	struct list_elem *e, *b;
 	struct sleeping_thread *t;
 
 	for(e = list_begin (&sleeping_thread_list); e != list_end (&sleeping_thread_list); e = b){
