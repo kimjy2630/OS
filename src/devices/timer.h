@@ -21,5 +21,5 @@ void timer_nsleep (int64_t nanoseconds);
 void timer_print_stats (void);
 
 ////
-bool wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux);
+//static bool wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux);
 #endif /* devices/timer.h */
