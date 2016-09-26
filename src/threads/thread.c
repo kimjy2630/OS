@@ -29,7 +29,7 @@
 static struct list ready_list;
 
 ////
-static struct list sleeping_thread_list;
+//static struct list sleeping_thread_list;
 
 /* Idle thread. */
 static struct thread *idle_thread;
@@ -244,52 +244,52 @@ thread_unblock (struct thread *t)
 }
 
 ////
-void
-thread_sleep (int64_t sleep_start, int64_t sleep_time){
-	struct thread *curr = thread_current();
-	enum intr_level old_level;
-
-	if(curr != idle_thread){
-
-		struct sleeping_thread *t;
-
-		t->thread = curr;
-		t->wakeup_time = sleep_start + sleep_time;
-
-		old_level = intr_disable ();
-		list_push_back (&sleeping_thread_list, &t->elem);
-		curr->status = THREAD_BLOCKED;
-		schedule();
-		intr_set_level (old_level);
-	}
-
-	/* thread_yield
-	old_level = intr_disable ();
-	if (curr != idle_thread)
-	  list_push_back (&ready_list, &curr->elem);
-	curr->status = THREAD_READY;
-	schedule ();
-	intr_set_level (old_level);
-	*/
-}
+//void
+//thread_sleep (int64_t sleep_start, int64_t sleep_time){
+//	struct thread *curr = thread_current();
+//	enum intr_level old_level;
+//
+//	if(curr != idle_thread){
+//
+//		struct sleeping_thread *t;
+//
+//		t->thread = curr;
+//		t->wakeup_time = sleep_start + sleep_time;
+//
+//		old_level = intr_disable ();
+//		list_push_back (&sleeping_thread_list, &t->elem);
+//		curr->status = THREAD_BLOCKED;
+//		schedule();
+//		intr_set_level (old_level);
+//	}
+//
+//	/* thread_yield
+//	old_level = intr_disable ();
+//	if (curr != idle_thread)
+//	  list_push_back (&ready_list, &curr->elem);
+//	curr->status = THREAD_READY;
+//	schedule ();
+//	intr_set_level (old_level);
+//	*/
+//}
 
 ////
-void
-thread_wakeup (int64_t time){
-	struct list_elem *e, *b;
-	struct sleeping_thread *t;
-
-	for(e = list_begin (&sleeping_thread_list); e != list_end (&sleeping_thread_list); e = b){
-		b = list_next(e);
-//		t = e - sizeof(int64_t) - sizeof(thread*);
-		t = list_entry(e, struct sleeping_thread, elem);
-
-		if(t->wakeup_time < time){
-			thread_unblock(t->thread);
-			list_remove(e);
-		}
-	}
-}
+//void
+//thread_wakeup (){
+//	struct list_elem *e, *b;
+//	struct sleeping_thread *t;
+//
+//	for(e = list_begin (&sleeping_thread_list); e != list_end (&sleeping_thread_list); e = b){
+//		b = list_next(e);
+////		t = e - sizeof(int64_t) - sizeof(thread*);
+//		t = list_entry(e, struct sleeping_thread, elem);
+//
+//		if(t->wakeup_time <= timer_ticks()){
+//			thread_unblock(t->thread);
+//			list_remove(e);
+//		}
+//	}
+//}
 
 /* Returns the name of the running thread. */
 const char *
