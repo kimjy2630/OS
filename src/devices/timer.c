@@ -133,9 +133,7 @@ timer_sleep (int64_t ticks)
 
 	  old_level = intr_disable ();
 //	  list_push_back (&sleeping_thread_list, &t->elem);
-	  bool (*less) (struct list_elem*, struct list_elem*, void*);
-	  less = wakeup_early;
-	  list_insert_ordered (&sleeping_thread_list, &t->elem, less, NULL);
+	  list_insert_ordered (&sleeping_thread_list, &t->elem, wakeup_earlyl, NULL);
 //	  curr->status = THREAD_BLOCKED;
 //	  schedule();
 	  thread_block();
