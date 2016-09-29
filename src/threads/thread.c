@@ -385,9 +385,9 @@ largest_waiting_priority (struct lock L){
 bool
 larger_waiting_priority (const struct list_elem *a, const struct list_elem *b, void *aux){
 	int priority_a =
-			largest_waiting_priority(list_entry(a, struct lock, elem));
+			largest_waiting_priority(*list_entry(a, struct lock, elem));
 	int priority_b =
-			largest_waiting_priority(list_entry(b, struct lock, elem));
+			largest_waiting_priority(*list_entry(b, struct lock, elem));
 	return priority_a > priority_b;
 }
 ////
@@ -400,11 +400,11 @@ get_effective_priority (struct thread* t){
 		struct lock highest_priority_lock =
 				list_max(t->lock, larger_waiting_priority, NULL);
 		int donated_priority = largest_waiting_priority(highest_priority_lock);
-	}
 
-	if(base_priority > donated_priority)
-		return base_priority;
-	return donated_priority;
+		if(base_priority > donated_priority)
+			return base_priority;
+		return donated_priority;
+	}
 }
 
 ////
