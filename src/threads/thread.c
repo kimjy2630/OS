@@ -398,7 +398,8 @@ get_effective_priority (struct thread* t){
 		return base_priority;
 	else{
 		struct lock highest_priority_lock =
-				list_max(t->lock, larger_waiting_priority, NULL);
+				*list_entry(list_max(t->lock, larger_waiting_priority, NULL),
+						struct lock, NULL);
 		int donated_priority = largest_waiting_priority(highest_priority_lock);
 
 		if(base_priority > donated_priority)
