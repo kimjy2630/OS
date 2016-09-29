@@ -75,7 +75,7 @@ void schedule_tail (struct thread *prev);
 static tid_t allocate_tid (void);
 
 ////
-static bool priority_insert(const struct list_elem *a, const struct list_elem *b, void *aux);
+//static bool priority_insert(const struct list_elem *a, const struct list_elem *b, void *aux);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -374,7 +374,7 @@ thread_yield (void)
 }
 
 ////
-static bool
+bool
 priority_insert (const struct list_elem *a, const struct list_elem *b, void *aux){
 	int priority_a = list_entry (a, struct thread, elem)->priority;
 	int priority_b = list_entry (b, struct thread, elem)->priority;
