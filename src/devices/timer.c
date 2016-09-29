@@ -31,7 +31,7 @@ static void real_time_sleep (int64_t num, int32_t denom);
 
 ////
 static struct list sleeping_thread_list;
-static bool wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux);
+// static bool wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux);
 
 /* Sets up the 8254 Programmable Interval Timer (PIT) to
    interrupt PIT_FREQ times per second, and registers the
@@ -100,12 +100,12 @@ timer_elapsed (int64_t then)
 }
 
 ////
-static bool
-wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux){
-	int64_t time_a = list_entry (a, struct sleeping_thread, elem)->wakeup_time;
-	int64_t time_b = list_entry (b, struct sleeping_thread, elem)->wakeup_time;
-	return time_a < time_b;
-}
+//static bool
+//wakeup_early (const struct list_elem *a, const struct list_elem *b, void *aux){
+//	int64_t time_a = list_entry (a, struct sleeping_thread, elem)->wakeup_time;
+//	int64_t time_b = list_entry (b, struct sleeping_thread, elem)->wakeup_time;
+//	return time_a < time_b;
+//}
 
 ////
 /* Suspends execution for approximately TICKS timer ticks. */
@@ -132,8 +132,8 @@ timer_sleep (int64_t ticks)
 	  t.wakeup_time = start + ticks;
 
 	  old_level = intr_disable ();
-//	  list_push_back (&sleeping_thread_list, &t->elem);
-	  list_insert_ordered (&sleeping_thread_list, &t.elem, wakeup_early, NULL);
+	  list_push_back (&sleeping_thread_list, &t.elem);
+//	  list_insert_ordered (&sleeping_thread_list, &t.elem, wakeup_early, NULL);
 //	  curr->status = THREAD_BLOCKED;
 //	  schedule();
 	  thread_block();
