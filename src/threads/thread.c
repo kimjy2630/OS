@@ -207,7 +207,7 @@ thread_create (const char *name, int priority,
 
   ////
   int curr_priority = thread_current()->priority;
-  if(curr_priority <= priority)
+  if(curr_priority < priority)
 	  thread_yield();
 
   return tid;
@@ -382,10 +382,17 @@ priority_insert (const struct list_elem *a, const struct list_elem *b, void *aux
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
+////
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
+  thread_current ()->struct thread *curr = thread_current ();
+  curr->priority = new_priority;
+  if(!list_empty(&ready_list)){
+    int highest_priority_in_ready =
+    		list_entry(list_front(&ready_list), struct thread, elem)->priority;
+    if(new_priority < highest_priority_in_ready && curr->status == THREAD_RUNNING)
+	    thread_yield();priority = new_priority;
 }
 
 /* Returns the current thread's priority. */
