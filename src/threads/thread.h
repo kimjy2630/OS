@@ -143,7 +143,7 @@ int thread_get_load_avg (void);
 
 ////
 bool priority_insert(const struct list_elem *a, const struct list_elem *b, void *aux);
-//void thread_sleep (int64_t sleep_start, int64_t sleep_time);
+//void thread_sleep (int64_t sleep_start, int64_t sleep_time);/
 //void thread_wakeup ();
 
 #endif /* threads/thread.h */
