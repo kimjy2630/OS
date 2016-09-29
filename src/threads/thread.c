@@ -76,6 +76,9 @@ static tid_t allocate_tid (void);
 
 ////
 //static bool priority_insert(const struct list_elem *a, const struct list_elem *b, void *aux);
+int largest_waiting_priority (struct lock L);
+bool larger_waiting_priority (const struct list_elem *a, const struct list_elem *b, void *aux);
+int get_effective_priority (struct thread* t);
 
 /* Initializes the threading system by transforming the code
    that's currently running into a thread.  This can't work in
@@ -372,12 +375,45 @@ thread_yield (void)
   schedule ();
   intr_set_level (old_level);
 }
+///
+int
+largest_waiting_priority (struct lock L){
+	struct list waiters = L.semaphore.waiters;
+	return get_effective_priority(list_entry(list_max(&waiters, priority_insert, NULL), struct thread, elem));
+}
+////
+bool
+larger_waiting_priority (const struct list_elem *a, const struct list_elem *b, void *aux){
+	int priority_a =
+			largest_waiting_priority(list_entry(a, struct lock, elem));
+	int priority_b =
+			largest_waiting_priority(list_entry(b, struct lock, elem));
+	return priority_a > priority_b;
+}
+////
+int
+get_effective_priority (struct thread* t){
+	int base_priority = t->priority;
+	if(list_empty(t->lock))
+		return base_priority;
+	else{
+		struct lock highest_priority_lock =
+				list_max(t->lock, larger_waiting_priority, NULL);
+		int donated_priority = largest_waiting_priority(highest_priority_lock);
+	}
+
+	if(base_priority > donated_priority)
+		return base_priority;
+	return donated_priority;
+}
 
 ////
 bool
 priority_insert (const struct list_elem *a, const struct list_elem *b, void *aux){
-	int priority_a = list_entry (a, struct thread, elem)->priority;
-	int priority_b = list_entry (b, struct thread, elem)->priority;
+//	int priority_a = list_entry (a, struct thread, elem)->priority;
+//	int priority_b = list_entry (b, struct thread, elem)->priority;
+	int priority_a = get_effective_priority (list_entry (a, struct thread, elem));
+	int priority_b = get_effective_priority (list_entry (b, struct thread, elem));
 	return priority_a > priority_b;
 }
 
@@ -391,7 +427,8 @@ thread_set_priority (int new_priority)
   if(!list_empty(&ready_list)){
     int highest_priority_in_ready =
     		list_entry(list_front(&ready_list), struct thread, elem)->priority;
-    if(new_priority < highest_priority_in_ready && curr->status == THREAD_RUNNING)
+//    if(new_priority < highest_priority_in_ready && curr->status == THREAD_RUNNING)
+    if(get_effective_priority(curr) < highest_priority_in_ready && curr->status == THREAD_RUNNING)
 	    thread_yield();
   }
 }
@@ -400,7 +437,9 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-  return thread_current ()->priority;
+//  return thread_current ()->priority;
+	////
+	return get_effective_priority(thread_current());
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -519,6 +558,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  ////
+  list_init(t->lock);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
