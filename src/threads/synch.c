@@ -214,7 +214,7 @@ lock_acquire (struct lock *lock)
   ////
   struct thread* curr = thread_current();
   lock->holder = curr;
-  list_push_back(curr->lock, &lock->elem);
+  list_push_back(&curr->lock, &lock->elem);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false

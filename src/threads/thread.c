@@ -209,7 +209,7 @@ thread_create (const char *name, int priority,
   thread_unblock (t);
 
   ////
-  int curr_priority = thread_current()->priority;
+  int curr_priority = get_effective_priority(thread_current());
   if(curr_priority < priority)
 	  thread_yield();
 
@@ -394,12 +394,12 @@ larger_waiting_priority (const struct list_elem *a, const struct list_elem *b, v
 int
 get_effective_priority (struct thread* t){
 	int base_priority = t->priority;
-	if(list_empty(t->lock))
+	if(list_empty(&t->lock))
 		return base_priority;
 	else{
 		struct lock highest_priority_lock =
-				*(list_entry(list_max(t->lock, larger_waiting_priority, NULL),
-						struct lock, NULL));
+				*(list_entry(list_max(&t->lock, larger_waiting_priority, NULL),
+						struct lock, elem));
 		int donated_priority = largest_waiting_priority(highest_priority_lock);
 
 		if(base_priority > donated_priority)
@@ -560,7 +560,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   ////
-  list_init(t->lock);
+  list_init(&t->lock);
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

@@ -93,7 +93,7 @@ struct thread
     struct list_elem elem;              /* List element. */
 
     ////
-    struct list *lock;
+    struct list lock;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
