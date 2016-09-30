@@ -217,7 +217,7 @@ lock_acquire (struct lock *lock)
 	  lock_holder->effective_priority = curr->effective_priority;
 
   sema_down (&lock->semaphore);
-//  lock->holder = thread_current ();
+//  lock->holder = thread_current (); //
   lock_holder = curr;
   list_push_back(&curr->lock, &lock->elem);
 }

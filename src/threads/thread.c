@@ -453,7 +453,7 @@ thread_set_priority (int new_priority)
 	    thread_yield();
   }
 }
-
+//
 /* Returns the current thread's priority. */
 int
 thread_get_priority (void) 
