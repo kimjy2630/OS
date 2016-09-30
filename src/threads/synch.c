@@ -220,8 +220,8 @@ lock_acquire (struct lock *lock)
 	  lock_holder->effective_priority = curr->effective_priority;
 
   sema_down (&lock->semaphore);
+  lock->holder = curr;
 //  lock->holder = thread_current (); //
-  lock_holder = curr;
   list_push_back(&curr->lock, &lock->elem);
 
   intr_set_level (old_level);
@@ -269,10 +269,10 @@ lock_release (struct lock *lock)
   enum intr_level old_level;
   old_level = intr_disable();
 
-  struct thread *lock_holder = lock->holder;
+//  struct thread *lock_holder = lock->holder;
   list_remove(&lock->elem);
-  update_effective_priority(lock_holder);
-  lock_holder = NULL;
+  update_effective_priority(thread_current());
+  lock->holder = NULL;
   sema_up (&lock->semaphore);
 
   intr_set_level (old_level);
