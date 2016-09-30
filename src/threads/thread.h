@@ -94,6 +94,7 @@ struct thread
 
     ////
     struct list lock;
+    int effective_priority;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -146,6 +147,7 @@ int thread_get_load_avg (void);
 
 ////
 bool priority_insert(const struct list_elem *a, const struct list_elem *b, void *aux);
+void update_effective_priority(struct thread *t);
 //void thread_sleep (int64_t sleep_start, int64_t sleep_time);/
 //void thread_wakeup ();
 

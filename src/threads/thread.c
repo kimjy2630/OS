@@ -393,19 +393,20 @@ larger_waiting_priority (const struct list_elem *a, const struct list_elem *b, v
 ////
 int
 get_effective_priority (struct thread* t){
-	int base_priority = t->priority;
-	if(list_empty(&t->lock))
-		return base_priority;
-	else{
-		struct lock highest_priority_lock =
-				*(list_entry(list_max(&t->lock, larger_waiting_priority, NULL),
-						struct lock, elem));
-		int donated_priority = largest_waiting_priority(highest_priority_lock);
-
-		if(base_priority > donated_priority)
-			return base_priority;
-		return donated_priority;
-	}
+//	int base_priority = t->priority;
+//	if(list_empty(&t->lock))
+//		return base_priority;
+//	else{
+//		struct lock highest_priority_lock =
+//				*(list_entry(list_max(&t->lock, larger_waiting_priority, NULL),
+//						struct lock, elem));
+//		int donated_priority = largest_waiting_priority(highest_priority_lock);
+//
+//		if(base_priority > donated_priority)
+//			return base_priority;
+//		return donated_priority;
+//	}
+	return t->effective_priority;
 }
 
 ////
@@ -416,6 +417,25 @@ priority_insert (const struct list_elem *a, const struct list_elem *b, void *aux
 	int priority_a = get_effective_priority (list_entry (a, struct thread, elem));
 	int priority_b = get_effective_priority (list_entry (b, struct thread, elem));
 	return priority_a > priority_b;
+}
+
+////
+void
+update_effective_priority(struct thread *t){
+	int base_priority = t->priority;
+	if(list_empty(&t->lock))
+		t->effective_priority = base_priority;
+	else{
+		struct lock highest_priority_lock =
+				*(list_entry(list_max(&t->lock, larger_waiting_priority, NULL),
+						struct lock, elem));
+		int donated_priority = largest_waiting_priority(highest_priority_lock);
+
+		if(base_priority > donated_priority)
+			t->effective_priority = base_priority;
+		else
+			t->effective_priority = donated_priority;
+	}
 }
 
 /* Sets the current thread's priority to NEW_PRIORITY. */
@@ -438,9 +458,9 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-//  return thread_current ()->priority;
+  return thread_current ()->priority;
 	////
-	return get_effective_priority(thread_current());
+//	return get_effective_priority(thread_current());
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -561,6 +581,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->magic = THREAD_MAGIC;
   ////
   list_init(&t->lock);
+  t->effective_priority = priority;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
