@@ -9,6 +9,4 @@ test_hello(void)
 	//printf("hello, world!");
 	msg("hello, world!");
 	pass();
-	pass();
-	pass();
 }

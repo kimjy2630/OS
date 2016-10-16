@@ -21,6 +21,7 @@ test_priority_change (void)
   thread_set_priority (PRI_DEFAULT - 2);
   msg ("Thread 2 should have just exited.");
 }
+//31 32 -> now lowering -> 31 29 -> just lowered -> 28 29 -> exiting -> just exited
 
 static void
 changing_thread (void *aux UNUSED) 
